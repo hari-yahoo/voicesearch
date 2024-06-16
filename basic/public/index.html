@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css" />
+    <title>Voice Search</title>
+</head>
+
+<body>
+
+    <main class="container">
+        <header>Voice Serach</header>
+        <section>
+            Implementing voice serach
+            <form>
+                <button id="voiceSearchBtn">🎤</button>
+                <input type="text" id="searchInput" placeholder="Search...">
+            </form>
+        </section>
+        <footer>
+            <hr />
+        </footer>
+
+        <script>
+            document.addEventListener('DOMContentLoaded-', () => {
+                const searchBtn = document.getElementById('voiceSearchBtn');
+                const searchInput = document.getElementById('searchInput');
+
+                if ('webkitSpeechRecognition' in window) {
+                    const recognition = new webkitSpeechRecognition();
+                    recognition.continuous = false;
+                    recognition.interimResults = false;
+                    recognition.lang = 'en-US';
+
+                    searchBtn.addEventListener('click', () => {
+                        recognition.start();
+                    });
+
+                    recognition.onresult = (event) => {
+                        const transcript = event.results[0][0].transcript;
+                        searchInput.value = transcript;
+                        performSearch(transcript);
+                    };
+
+                    recognition.onerror = (event) => {
+                        console.error('Speech recognition error', event);
+                    };
+                } else {
+                    alert('Speech recognition is not supported in this browser.');
+                }
+            });
+
+            function performSearch(query) {
+                // Implement your search logic here
+                console.log('Performing search for:', query);
+                // Example: Redirect to search results page
+                window.location.href = `/search?query=${encodeURIComponent(query)}`;
+            }
+
+        </script>
+</body>
+
+</html>
