@@ -14,17 +14,17 @@
         <header>Voice Serach</header>
         <section>
             Implementing voice serach
-            <form>
-                <button id="voiceSearchBtn">🎤</button>
-                <input type="text" id="searchInput" placeholder="Search...">
-            </form>
+
+            <button id="voiceSearchBtn">🎤</button>
+            <input type="text" id="searchInput" placeholder="Search...">
+
         </section>
         <footer>
             <hr />
         </footer>
 
         <script>
-            document.addEventListener('DOMContentLoaded-', () => {
+            document.addEventListener('DOMContentLoaded', () => {
                 const searchBtn = document.getElementById('voiceSearchBtn');
                 const searchInput = document.getElementById('searchInput');
 
@@ -35,7 +35,18 @@
                     recognition.lang = 'en-US';
 
                     searchBtn.addEventListener('click', () => {
-                        recognition.start();
+                       // recognition.start();
+                        navigator.permissions.query({ name: 'microphone' }).then((result) => {
+                            if (result.state === 'granted') {
+                                // The microphone is already granted
+                            } else if (result.state === 'prompt') {
+                                // Request permission
+                                recognition.start();
+                            } else if (result.state === 'denied') {
+                                alert(' - Microphone access is denied. Please enable microphone permissions.');
+                            }
+                        });
+
                     });
 
                     recognition.onresult = (event) => {
@@ -45,7 +56,11 @@
                     };
 
                     recognition.onerror = (event) => {
-                        console.error('Speech recognition error', event);
+                        if (event.error === 'not-allowed') {
+                            alert('Microphone access is not allowed. Please enable microphone permissions.');
+                        } else {
+                            console.error('Speech recognition error', event);
+                        }
                     };
                 } else {
                     alert('Speech recognition is not supported in this browser.');
@@ -53,9 +68,7 @@
             });
 
             function performSearch(query) {
-                // Implement your search logic here
                 console.log('Performing search for:', query);
-                // Example: Redirect to search results page
                 window.location.href = `/search?query=${encodeURIComponent(query)}`;
             }
 
